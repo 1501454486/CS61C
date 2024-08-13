@@ -31,11 +31,11 @@ Image *readData(char *filename)
 		return NULL;
 	}
 
-	Image *imageNode;
+	Image *imageNode = (Image*)malloc(sizeof(Image));
 	char format[8];
 	int maxColorVal;
 	
-	fscanf(fp, "%s", &format);
+	fscanf(fp, "%s", format);
 	fscanf(fp, "%u %u", &imageNode->cols, &imageNode->rows );
 	fscanf(fp, "%d", &maxColorVal );
 	
