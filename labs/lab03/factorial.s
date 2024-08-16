@@ -22,3 +22,18 @@ main:
 
 factorial:
     # YOUR CODE HERE
+    # Handle base_case for 0!
+    beq a0, x0, base_case   # if n == 0;
+    
+    addi t0, a0, -1      # int i = n-1;
+loop:
+    beq x0, t0, exit    # while(i)
+    mul a0, a0, t0      # n *= i;
+    addi t0, t0, -1     # i--;
+    j loop
+exit:
+    jr ra
+    
+base_case:
+    addi a0, a0, 1      # n = 1;
+    jr ra               # return;

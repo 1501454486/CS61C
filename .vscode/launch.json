@@ -1,6 +1,24 @@
 {
   "version": "0.2.0",
-  "configurations": [
+    "configurations": [
+      {
+        "type": "venus",
+        "request": "launch",
+        "name": "Launch current file with all options",
+        "program": "${file}",
+        "stopOnEntry": true,
+        "stopAtBreakpoints": true,
+        "openViews": [
+            "Robot",
+            "LED Matrix",
+            "Seven Segment Board"
+        ],
+        "ledMatrixSize": {
+            "x": 10,
+            "y": 10
+        }
+    },
+
     {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
