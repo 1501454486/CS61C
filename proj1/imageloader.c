@@ -34,6 +34,7 @@ Image *readData(char *filename)
 	Image *imageNode = (Image*)malloc(sizeof(Image));
 	char format[8];
 	int maxColorVal;
+	uint32_t R, G, B;
 	
 	fscanf(fp, "%s", format);
 	fscanf(fp, "%u %u", &imageNode->cols, &imageNode->rows );
@@ -43,7 +44,10 @@ Image *readData(char *filename)
 	for( int i = 0; i < imageNode->rows; i++ ) {
 		imageNode->image[i] = (Color*)malloc( imageNode->cols * sizeof(Color) );
 		for( int j = 0; j < imageNode->cols; j++ ) {
-			fscanf(fp, "%hhu %hhu %hhu", &imageNode->image[i][j].R, &imageNode->image[i][j].G, &imageNode->image[i][j].B );
+			fscanf(fp, "%u %u %u", &R, &G, &B );
+			imageNode->image[i][j].R = (uint8_t)R;
+			imageNode->image[i][j].G = (uint8_t)G;
+			imageNode->image[i][j].B = (uint8_t)B;
 		}
 	}
 	fclose(fp);
@@ -57,8 +61,7 @@ void writeData(Image *image)
 	if( image ) {
 		// if image is valid
 		printf("P3\n");
-		printf("%d %d\n", image->cols, image->rows );
-		printf("255\n");
+		printf("%d %d\n255\n", image->cols, image->rows );
 		for( int i = 0; i < image->rows; i++ ) {
 			for( int j = 0; j < image->cols - 1; j++ ) {
 				printf("%3u %3u %3u   ", image->image[i][j].R, image->image[i][j].G, image->image[i][j].B );
@@ -74,7 +77,7 @@ void freeImage(Image *image)
 	//YOUR CODE HERE
 	if( image ) {
 		for( int i = 0; i < image->rows; i++ ) {
-			free( image->image[i] );
+			if( image->image[i] ) free( image->image[i] );
 		}
 		free( image );
 	}
