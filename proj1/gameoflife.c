@@ -95,7 +95,7 @@ Image *life(Image *image, uint32_t rule)
 			return NULL;
 		}
 		for( int j = 0; j < newImage->cols; j++ ) {
-			Color *color = evaluateOneCell( image, image->rows, image->cols, rule );
+			Color *color = evaluateOneCell( image, i, j, rule );
 			newImage->image[i][j] = *color;
 		}
 	}
