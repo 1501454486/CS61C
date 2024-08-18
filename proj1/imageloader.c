@@ -34,7 +34,6 @@ Image *readData(char *filename)
 
     fscanf(fp, "%u %u", &imageNode->cols, &imageNode->rows);
     fscanf(fp, "%d", &maxColorVal);
-    printf("Loaded Image: %u cols, %u rows\n", imageNode->cols, imageNode->rows);
 
     imageNode->image = (Color **)malloc(imageNode->rows * sizeof(Color *));
     if (!imageNode->image) {
