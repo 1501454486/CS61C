@@ -70,39 +70,53 @@ Color *evaluateOneCell(Image *image, int row, int col, uint32_t rule)
 
 //The main body of Life; given an image and a rule, computes one iteration of the Game of Life.
 //You should be able to copy most of this from steganography.c
-Image *life(Image *image, uint32_t rule)
-{
-	//YOUR CODE HERE
-	Image *newImage = (Image *)malloc( sizeof( Image ) );
-	if( !newImage ) {
-		perror("Failed to allocate memory for new image");
-		return NULL;
-	}
+Image *life(Image *image, uint32_t rule) {
+    Image *newImage = (Image *)malloc(sizeof(Image));
+    if (!newImage) {
+        perror("Failed to allocate memory for new image");
+        return NULL;
+    }
 
-	newImage->cols = image->cols;
-	newImage->rows = image->rows;
-	newImage->image = (Color **)malloc( newImage->rows * sizeof( Color * ) );
-	// if allocation fails, free the mamories that have been allocated;
-	if( !newImage->image ) {
-		free( newImage );
-		return NULL;
-	}
-	
-	for( int i = 0; i < newImage->rows; i++ ) {
-		newImage->image[i] = ( Color * )malloc( newImage->cols * sizeof( Color ) );
-		// if allocation fails, free the mamories that have been allocated;
-		if( !newImage->image[i] ) {
-			freeImage( newImage );
-			return NULL;
-		}
-		for( int j = 0; j < newImage->cols; j++ ) {
-			Color *color = evaluateOneCell( image, i, j, rule );
-			newImage->image[i][j] = *color;
-		}
-	}
+    newImage->cols = image->cols;
+    newImage->rows = image->rows;
+    newImage->image = (Color **)malloc(newImage->rows * sizeof(Color *));
+    if (!newImage->image) {
+        perror("Failed to allocate memory for new image rows");
+        free(newImage);
+        return NULL;
+    }
 
-	return newImage;
+    for (int i = 0; i < newImage->rows; i++) {
+        newImage->image[i] = (Color *)malloc(newImage->cols * sizeof(Color));
+        if (!newImage->image[i]) {
+            perror("Failed to allocate memory for new image columns");
+            for (int j = 0; j < i; j++) {
+                free(newImage->image[j]);
+            }
+            free(newImage->image);
+            free(newImage);
+            return NULL;
+        }
+
+        for (int j = 0; j < newImage->cols; j++) {
+            Color *color = evaluateOneCell(image, i, j, rule);
+            if (!color) {
+                fprintf(stderr, "Failed to evaluate cell at (%d, %d)\n", i, j);
+                for (int k = 0; k <= i; k++) {
+                    free(newImage->image[k]);
+                }
+                free(newImage->image);
+                free(newImage);
+                return NULL;
+            }
+            newImage->image[i][j] = *color;
+            free(color);
+        }
+    }
+
+    return newImage;
 }
+
 
 /*
 Loads a .ppm from a file, computes the next iteration of the game of life, then prints to stdout the new image.
