@@ -75,6 +75,7 @@ Image *life(Image *image, uint32_t rule)
 	//YOUR CODE HERE
 	Image *newImage = (Image *)malloc( sizeof( Image ) );
 	if( !newImage ) {
+		perror("Failed to allocate memory for new image");
 		return NULL;
 	}
 
@@ -126,12 +127,19 @@ int main(int argc, char **argv)
 	Image *image = readData( filename );
 	if( !image ) {
 		// if read fails
+		fprintf(stderr, "Failed to read image\n");
 		return -1;
 	}
 
 	uint32_t rule = strtol( argv[2], NULL, 16 );
 	Image *newImage = life( image, rule );
 	freeImage( image );
+
+	if ( !newImage->cols || !newImage->rows ) {
+    	fprintf(stderr, "The generated image has zero dimensions.\n");
+		free( newImage );
+    	return -1;
+	}
 
 	writeData( newImage );
 	freeImage( newImage );

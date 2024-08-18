@@ -32,15 +32,32 @@ Image *readData(char *filename)
 	}
 
 	Image *imageNode = (Image*)malloc(sizeof(Image));
+	if( !imageNode ) {
+		perror("Error allocating memory");
+		fclose( fp );
+		return NULL;
+	}
+
 	char format[8];
 	int maxColorVal;
 	uint32_t R, G, B;
 	
 	fscanf(fp, "%s", format);
+	if( strcmp(format, "P3") ) {
+		fprintf(stderr, "Invalid file format: %s\n", format);
+		free( imageNode );
+		fclose( fp );
+		return NULL;
+	}
+
 	fscanf(fp, "%u %u", &imageNode->cols, &imageNode->rows );
 	fscanf(fp, "%d", &maxColorVal );
+
+	fscanf(fp, "%u %u", &imageNode->cols, &imageNode->rows );
+	printf("Loaded Image: %u cols, %u rows\n", imageNode->cols, imageNode->rows);
 	
 	imageNode->image = (Color**)malloc(imageNode->rows * sizeof(Color*));
+
 	for( int i = 0; i < imageNode->rows; i++ ) {
 		imageNode->image[i] = (Color*)malloc( imageNode->cols * sizeof(Color) );
 		for( int j = 0; j < imageNode->cols; j++ ) {
@@ -62,6 +79,7 @@ void writeData(Image *image)
 		// if image is valid
 		printf("P3\n");
 		printf("%d %d\n255\n", image->cols, image->rows );
+		
 		for( int i = 0; i < image->rows; i++ ) {
 			for( int j = 0; j < image->cols - 1; j++ ) {
 				printf("%3u %3u %3u   ", image->image[i][j].R, image->image[i][j].G, image->image[i][j].B );
@@ -76,8 +94,11 @@ void freeImage(Image *image)
 {
 	//YOUR CODE HERE
 	if( image ) {
-		for( int i = 0; i < image->rows; i++ ) {
-			if( image->image[i] ) free( image->image[i] );
+		if( image->image) {
+			for( int i = 0; i < image->rows; i++ ) {
+				if( image->image[i] ) free( image->image[i] );
+			}
+			free( image->image );
 		}
 		free( image );
 	}
