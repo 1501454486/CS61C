@@ -32,6 +32,12 @@ if ($#argv != 3) then
     exit 0
 endif
 
+# Debug information
+echo "Input Directory: $indir"
+echo "Output Directory: $outdir"
+echo "Executable: $life"
+echo "Arguments: $1 (rootname), $2 (rule), $3 (frames)"
+
 if (! -e $indir) then
     echo "$indir input directory doesn't exist, exiting..."
     exit -1
@@ -48,26 +54,43 @@ if (! -e $outdir) then
 endif
 
 if (! -e $outdir/$1) then
-    echo "$1 directory doesn't exist, creating..."
+    echo "$outdir/$1 directory doesn't exist, creating..."
     mkdir $outdir/$1
 else
-    echo "$1 directory already exists; existing files will not be recomputed"
+    echo "$outdir/$1 directory already exists; existing files will not be recomputed"
 endif
 
+# Copy initial PPM file
 cp $indir/$1.ppm $outdir/$1/$1_$2_10000.ppm
+if ($status != 0) then
+    echo "Error copying $indir/$1.ppm to $outdir/$1/$1_$2_10000.ppm"
+    exit -1
+endif
 @ n = 10000
 @ max = 10000 + $3
+
 while ($n < $max)
     @ np = $n + 1
     @ report = $np - 10000
     if (-e $outdir/$1/$1_$2_$np.ppm) then    
-		echo -n "[$report] "
-	else
-		echo -n "$report "
-	    $life $outdir/$1/$1_$2_$n.ppm $2 >! $outdir/$1/$1_$2_$np.ppm
+	echo -n "[$report] "
+    else
+	echo -n "$report "
+	# Debug information for each iteration
+	echo "Running: $life $outdir/$1/$1_$2_$n.ppm $2 >! $outdir/$1/$1_$2_$np.ppm"
+	$life $outdir/$1/$1_$2_$n.ppm $2 >! $outdir/$1/$1_$2_$np.ppm
+	if ($status != 0) then
+	    echo "Error running gameOfLife"
+	    exit -1
 	endif
+    endif
     @ n = $n + 1
 end
+
 echo "Making gif in $1.gif"
 convert -delay 20 -loop 0 -scale 400% $outdir/$1/*.ppm $1.gif
+if ($status != 0) then
+    echo "Error creating gif"
+    exit -1
+endif
 echo ""

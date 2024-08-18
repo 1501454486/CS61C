@@ -135,27 +135,33 @@ You may find it useful to copy the code from steganography.c, to start.
 */
 int main(int argc, char **argv)
 {
-	//YOUR CODE HERE
-	char *filename = argv[1];
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <filename> <rule (in hex)>\n", argv[0]);
+        return -1;
+    }
 
-	Image *image = readData( filename );
-	if( !image ) {
-		// if read fails
-		fprintf(stderr, "Failed to read image\n");
-		return -1;
-	}
+    printf("Input filename: %s\n", argv[1]);
+    printf("Rule: %s\n", argv[2]);
 
-	uint32_t rule = strtol( argv[2], NULL, 16 );
-	Image *newImage = life( image, rule );
-	freeImage( image );
+    char *filename = argv[1];
 
-	if ( !newImage->cols || !newImage->rows ) {
-    	fprintf(stderr, "The generated image has zero dimensions.\n");
-		free( newImage );
-    	return -1;
-	}
+    Image *image = readData(filename);
+    if (!image) {
+        fprintf(stderr, "Failed to read image\n");
+        return -1;
+    }
 
-	writeData( newImage );
-	freeImage( newImage );
-	return 0;
+    uint32_t rule = strtol(argv[2], NULL, 16);
+    Image *newImage = life(image, rule);
+    freeImage(image);
+
+    if (!newImage || !newImage->cols || !newImage->rows) {
+        fprintf(stderr, "The generated image has zero dimensions.\n");
+        freeImage(newImage);
+        return -1;
+    }
+
+    writeData(newImage);
+    freeImage(newImage);
+    return 0;
 }
