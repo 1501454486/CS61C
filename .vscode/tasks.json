@@ -1,26 +1,53 @@
 {
     "version": "2.0.0",
     "tasks": [
-      {
-        "label": "build",
-        "type": "shell",
-        "command": "make",
-        "args": ["all"],
-        "group": {
-          "kind": "build",
-          "isDefault": true
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "all"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
-        "problemMatcher": ["$gcc"]
-      },
-      {
-        "label": "clean",
-        "type": "shell",
-        "command": "make",
-        "args": ["clean"],
-        "group": {
-          "kind": "none",
-          "isDefault": false
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "group": {
+                "kind": "none",
+                "isDefault": false
+            }
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc.exe 生成活动文件",
+            "command": "C:/mingw64/bin/gcc.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                ""
+            ],
+            "options": {
+                "cwd": "C:/mingw64/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "调试器生成的任务。"
         }
-      }
     ]
 }
